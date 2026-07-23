@@ -7,260 +7,237 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #050505;
-            --surface-color: rgba(25, 25, 30, 0.6);
-            --primary-glow: #00f0ff;
-            --secondary-glow: #7000ff;
-            --text-main: #f0f0f0;
-            --text-muted: #a0a0a0;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Core Theme */
+            --bg-color: #030305;
+            --surface-color: rgba(20, 20, 25, 0.65);
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            
+            /* Requested Custom Colors (Adapted for Dark Mode Neon) */
+            --c-red: #ff3333;
+            --c-green: #00e676;
+            --c-blue: #2979ff;
+            --c-orange: #ff9100;
+            --c-yellow: #ffea00;
+            --c-maroon: #b03060;
+            --c-chocolate: #d2691e;
+            --c-primary: #00f0ff;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.7;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.08), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 25%);
-            background-attachment: fixed;
         }
+
+        /* --- Global Dynamic Lighting Effect --- */
+        .lighting-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: -1;
+            background: 
+                radial-gradient(circle at 15% 20%, rgba(41, 121, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 80%, rgba(255, 51, 51, 0.05), transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.03), transparent 40%);
+            animation: lightShift 15s ease-in-out infinite alternate;
+        }
+        @keyframes lightShift {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.1) translate(-2%, 2%); }
+        }
+
+        /* --- Loading Animation --- */
+        #preloader {
+            position: fixed; inset: 0;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+        .loader-ring {
+            width: 50px; height: 50px;
+            border: 3px solid var(--glass-border);
+            border-top-color: var(--c-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- Typography & Utilities --- */
         h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
         .highlight {
-            background: linear-gradient(90deg, var(--primary-glow), #d870ff);
+            background: linear-gradient(90deg, var(--c-primary), var(--c-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
 
         /* --- Navigation --- */
         nav {
-            position: fixed;
-            top: 0; width: 100%;
-            padding: 1.5rem 0;
-            background: rgba(5, 5, 5, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 1000;
+            position: fixed; top: 0; width: 100%; padding: 1.2rem 0;
+            background: rgba(3, 3, 5, 0.7); backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border); z-index: 1000;
         }
-        
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--text-main); text-decoration: none;}
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 800; color: var(--text-main); text-decoration: none;}
         .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            margin-left: 2rem;
-            transition: var(--transition);
-            font-size: 0.95rem;
+            color: var(--text-muted); text-decoration: none; margin-left: 2.5rem;
+            transition: var(--transition); font-size: 0.9rem; font-weight: 500;
         }
-        .nav-links a:hover { color: var(--primary-glow); }
+        .nav-links a:hover { color: var(--text-main); }
 
         /* --- Buttons --- */
         .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.8rem 1.8rem;
-            border-radius: 50px;
-            text-decoration: none; font-weight: 600;
-            transition: var(--transition);
-            cursor: pointer; border: none; outline: none;
-            position: relative; overflow: hidden;
+            padding: 0.75rem 1.8rem; border-radius: 8px; /* Modern square-ish edges */
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: var(--transition); cursor: pointer; border: none;
         }
-        
         .btn-primary {
-            background: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--primary-glow);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            background: rgba(0, 240, 255, 0.1); color: var(--c-primary);
+            border: 1px solid rgba(0, 240, 255, 0.3);
         }
         .btn-primary:hover {
-            background: var(--primary-glow);
-            color: #000;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+            background: var(--c-primary); color: #000;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
             transform: translateY(-2px);
         }
+        .btn-outline {
+            background: transparent; color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); }
 
         /* --- Hero Section --- */
-        #home {
-            min-height: 100vh;
-            display: flex; align-items: center;
-            padding-top: 5rem;
-        }
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-        .hero-text h1 {
-            font-size: 4.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-        }
-        .hero-text p {
-            font-size: 1.2rem; color: var(--text-muted);
-            margin-bottom: 2rem; max-width: 500px;
-        }
+        #home { min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .hero-text h1 { font-size: 4.8rem; line-height: 1.05; margin-bottom: 1.5rem; }
+        .hero-text p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 540px; }
         
-        .profile-container {
-            position: relative;
-            width: 350px; height: 350px;
-            margin: auto;
-        }
+        .profile-container { position: relative; width: 380px; height: 380px; margin: auto; }
         .profile-container::before {
-            content: ''; position: absolute; inset: -10px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
-            filter: blur(20px); opacity: 0.5;
-            animation: pulse 4s infinite alternate;
+            content: ''; position: absolute; inset: -15px; border-radius: 50%;
+            background: linear-gradient(45deg, var(--c-blue), var(--c-primary));
+            filter: blur(30px); opacity: 0.3; animation: pulse 6s infinite alternate;
         }
         .profile-img {
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            position: relative;
-            border: 2px solid var(--glass-border);
-            background: #1a1a1a; /* Placeholder bg */
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            position: relative; border: 1px solid var(--glass-border); background: #111;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.4; }
-            100% { transform: scale(1.05); opacity: 0.7; }
-        }
+        @keyframes pulse { 0% { opacity: 0.2; transform: scale(0.98); } 100% { opacity: 0.5; transform: scale(1.02); } }
 
         /* --- Sections Shared --- */
-        section { padding: 8rem 0; }
-        .section-title {
-            font-size: 2.5rem; margin-bottom: 3rem;
-            text-align: center;
-        }
+        section { padding: 7rem 0; }
+        .section-title { font-size: 2.2rem; margin-bottom: 3.5rem; text-align: center; }
 
         /* --- About Section --- */
-        .about-content {
-            background: var(--surface-color);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 3rem;
-            backdrop-filter: blur(10px);
+        .about-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; }
+        .about-card {
+            background: var(--surface-color); border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(12px);
         }
-        .academic-stats {
-            display: flex; gap: 2rem; margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-        .stat-badge {
-            background: rgba(255,255,255,0.05);
-            padding: 1rem 1.5rem; border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            border-left: 3px solid var(--secondary-glow);
+        .info-list { margin-top: 2rem; list-style: none; }
+        .info-list li { margin-bottom: 1rem; color: var(--text-muted); display: flex; align-items: baseline; gap: 1rem;}
+        .info-list li strong { color: var(--text-main); min-width: 120px; display: inline-block; }
+        
+        .hobbies-tags { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem; }
+        .hobby-tag {
+            padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+            color: var(--text-muted);
         }
 
         /* --- Skills Section --- */
         .skills-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
         }
         .skill-category {
-            background: var(--surface-color);
-            padding: 2rem; border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
+            background: var(--surface-color); padding: 2rem; border-radius: 12px;
+            border: 1px solid var(--glass-border); transition: var(--transition);
         }
-        .skill-category:hover {
-            border-color: rgba(112, 0, 255, 0.5);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transform: translateY(-5px);
-        }
-        .skill-category h3 { margin-bottom: 1.5rem; color: var(--primary-glow); }
-        .skill-tags {
-            display: flex; flex-wrap: wrap; gap: 0.8rem;
-        }
+        .skill-category:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-3px); }
+        .skill-category h3 { margin-bottom: 1.5rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.8rem; }
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        
+        /* Custom Colored Tags */
         .tag {
-            background: rgba(255,255,255,0.05);
-            padding: 0.5rem 1rem; border-radius: 8px;
-            font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;
-            transition: var(--transition);
+            padding: 0.4rem 0.9rem; border-radius: 6px; font-size: 0.85rem; font-weight: 500;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            transition: var(--transition); cursor: default;
         }
-        .tag:hover { background: rgba(255,255,255,0.15); }
+        
+        /* Interactive Neon Hover Colors based on request */
+        .tag-red:hover { border-color: var(--c-red); color: var(--c-red); box-shadow: 0 0 10px rgba(255,51,51,0.2); }
+        .tag-blue:hover { border-color: var(--c-blue); color: var(--c-blue); box-shadow: 0 0 10px rgba(41,121,255,0.2); }
+        .tag-green:hover { border-color: var(--c-green); color: var(--c-green); box-shadow: 0 0 10px rgba(0,230,118,0.2); }
+        .tag-orange:hover { border-color: var(--c-orange); color: var(--c-orange); box-shadow: 0 0 10px rgba(255,145,0,0.2); }
+        .tag-yellow:hover { border-color: var(--c-yellow); color: var(--c-yellow); box-shadow: 0 0 10px rgba(255,234,0,0.2); }
+        .tag-maroon:hover { border-color: var(--c-maroon); color: var(--c-maroon); box-shadow: 0 0 10px rgba(176,48,96,0.3); }
+        .tag-choco:hover { border-color: var(--c-chocolate); color: var(--c-chocolate); box-shadow: 0 0 10px rgba(210,105,30,0.2); }
 
         /* --- Projects Section --- */
-        .project-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
         .project-card {
-            background: var(--surface-color);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px; padding: 2rem;
-            position: relative; overflow: hidden;
-            transition: var(--transition);
-            display: flex; flex-direction: column;
+            background: var(--surface-color); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 2rem; position: relative; overflow: hidden;
+            transition: var(--transition); display: flex; flex-direction: column;
         }
-        .project-card::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow));
-            transform: scaleX(0); transform-origin: left;
-            transition: transform 0.4s ease;
+        .project-card::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--c-blue), var(--c-primary));
+            opacity: 0; transition: var(--transition);
         }
-        .project-card:hover { transform: translateY(-10px); }
-        .project-card:hover::before { transform: scaleX(1); }
-        .project-card h3 { font-size: 1.4rem; margin-bottom: 1rem; }
+        .project-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.1); }
+        .project-card:hover::after { opacity: 1; }
+        .project-card h3 { font-size: 1.3rem; margin-bottom: 0.8rem; }
         .project-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem; flex-grow: 1; }
-        
+
         /* --- Contact Section --- */
         .contact-box {
             text-align: center; max-width: 600px; margin: 0 auto;
-            background: var(--surface-color);
-            padding: 4rem 2rem; border-radius: 24px;
+            background: var(--surface-color); padding: 4rem 2rem; border-radius: 16px;
             border: 1px solid var(--glass-border);
         }
-        .contact-methods {
-            display: flex; justify-content: center; gap: 2rem;
-            margin-top: 2rem;
-        }
+        .contact-methods { display: flex; justify-content: center; gap: 2.5rem; margin-top: 2.5rem; }
         .contact-item {
-            display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
-            color: var(--text-muted); text-decoration: none;
-            transition: var(--transition);
+            display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+            color: var(--text-muted); text-decoration: none; transition: var(--transition); font-size: 0.95rem;
         }
-        .contact-item i { font-size: 1.8rem; color: var(--primary-glow); }
-        .contact-item:hover { color: var(--text-main); transform: scale(1.1); }
+        .contact-item i { font-size: 1.5rem; color: var(--c-primary); background: rgba(0,240,255,0.1); padding: 1rem; border-radius: 50%; }
+        .contact-item:hover { color: var(--text-main); transform: translateY(-4px); }
 
         /* --- Scroll Animations --- */
-        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s all ease; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* --- Responsive Design --- */
         @media (max-width: 768px) {
-            .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
-            .hero-text h1 { font-size: 3rem; }
+            .hero-grid, .about-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+            .hero-text h1 { font-size: 3.5rem; }
             .hero-text p { margin: 0 auto 2rem auto; }
-            .nav-links { display: none; /* Add hamburger menu in production */ }
-            .profile-container { width: 280px; height: 280px; }
-            .academic-stats { flex-direction: column; gap: 1rem; }
+            .nav-links { display: none; }
+            .profile-container { width: 300px; height: 300px; }
+            .info-list li { flex-direction: column; gap: 0.2rem; align-items: center; }
+            .hobbies-tags { justify-content: center; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Loading Animation Overlay -->
+    <div id="preloader">
+        <div class="loader-ring"></div>
+    </div>
+
+    <!-- Background Lighting Effect -->
+    <div class="lighting-overlay"></div>
 
     <!-- Navigation -->
     <nav>
@@ -268,11 +245,11 @@
             <a href="#" class="logo">A<span class="highlight">.Ruhan</span></a>
             <div class="nav-links">
                 <a href="#about" class="haptic-btn">About</a>
-                <a href="#skills" class="haptic-btn">Skills</a>
+                <a href="#skills" class="haptic-btn">Skills & Core</a>
                 <a href="#projects" class="haptic-btn">Projects</a>
                 <a href="#contact" class="haptic-btn">Contact</a>
             </div>
-            <a href="#" class="btn btn-primary haptic-btn"><i class="fas fa-download"></i> Resume</a>
+            <a href="#" class="btn btn-outline haptic-btn"><i class="fas fa-file-alt"></i> Resume</a>
         </div>
     </nav>
 
@@ -280,18 +257,17 @@
     <section id="home">
         <div class="container hero-grid">
             <div class="hero-text reveal">
-                <h2>Hello, I'm</h2>
+                <h2>Hi, I'm</h2>
                 <h1>Anik <span class="highlight">Ruhan</span></h1>
-                <p>A software engineering student bridging the gap between robust system architecture and cutting-edge artificial intelligence. Building intelligent systems and elegant interfaces.</p>
-                <div style="display: flex; gap: 1rem;">
+                <p>A Software Engineering student building scalable web architectures and exploring the frontiers of Data Science & Machine Learning.</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <a href="#projects" class="btn btn-primary haptic-btn">View My Work</a>
-                    <a href="https://github.com/" target="_blank" class="btn haptic-btn" style="color: var(--text-main); border: 1px solid var(--glass-border);"><i class="fab fa-github"></i> GitHub</a>
+                    <a href="https://github.com/" target="_blank" class="btn btn-outline haptic-btn"><i class="fab fa-github"></i> GitHub</a>
                 </div>
             </div>
             <div class="hero-image reveal">
                 <div class="profile-container">
-                    <!-- Replace src with your actual photo URL -->
-                    <img src="/api/placeholder/350/350" alt="Anik Ruhan Profile" class="profile-img">
+                    <img src="/api/placeholder/380/380" alt="Anik Ruhan Profile" class="profile-img">
                 </div>
             </div>
         </div>
@@ -300,26 +276,50 @@
     <!-- About Section -->
     <section id="about">
         <div class="container">
-            <h2 class="section-title reveal">About <span class="highlight">Me</span></h2>
-            <div class="about-content reveal">
-                <p>I am an undergraduate student pursuing my BSc in Computer Science and Engineering. My technical journey is driven by a fascination with both low-level system optimization and high-level AI integrations. Whether I'm configuring complex inter-VLAN routing in networking labs or researching the impact of MLOps on software engineering, I focus on scalable, robust solutions.</p>
-                
-                <div class="academic-stats">
-                    <div class="stat-badge">
-                        <i class="fas fa-university" style="color: var(--secondary-glow); margin-bottom: 0.5rem; display: block;"></i>
-                        <strong>University</strong><br>
-                        <span style="color: var(--text-muted)">AIUB</span>
+            <h2 class="section-title reveal">Profile & <span class="highlight">Background</span></h2>
+            <div class="about-grid">
+                <div class="about-card reveal">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Overview</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                        I am currently an undergraduate student driven by logic, algorithms, and system optimization. My technical journey spans across robust full-stack web technologies, desktop application development, and foundational research in AI/ML and Data Science. I focus on writing clean code, understanding complex time complexities, and deploying intelligent systems.
+                    </p>
+                    <p style="color: var(--text-muted);">
+                        Beyond the terminal, I maintain a balanced lifestyle to keep my mind sharp and creative.
+                    </p>
+                    
+                    <h4 style="margin-top: 2rem; margin-bottom: 1rem; font-size: 1rem; color: var(--text-main);">Interests & Hobbies</h4>
+                    <div class="hobbies-tags">
+                        <span class="hobby-tag"><i class="fas fa-cricket"></i> Playing Cricket</span>
+                        <span class="hobby-tag"><i class="fas fa-plane-departure"></i> Touring</span>
+                        <span class="hobby-tag"><i class="fas fa-film"></i> Movies</span>
+                        <span class="hobby-tag"><i class="fas fa-tv"></i> Series</span>
                     </div>
-                    <div class="stat-badge">
-                        <i class="fas fa-graduation-cap" style="color: var(--secondary-glow); margin-bottom: 0.5rem; display: block;"></i>
-                        <strong>Degree</strong><br>
-                        <span style="color: var(--text-muted)">BSc. Computer Science & Eng.</span>
-                    </div>
-                    <div class="stat-badge">
-                        <i class="fas fa-chart-line" style="color: var(--secondary-glow); margin-bottom: 0.5rem; display: block;"></i>
-                        <strong>Academic Standing</strong><br>
-                        <span style="color: var(--text-muted)">CGPA: 3.60</span>
-                    </div>
+                </div>
+
+                <div class="about-card reveal" style="background: rgba(20,20,25,0.4);">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.4rem;">Academics</h3>
+                    <ul class="info-list">
+                        <li>
+                            <strong>University:</strong> 
+                            <span>American International University-Bangladesh</span>
+                        </li>
+                        <li>
+                            <strong>Department:</strong> 
+                            <span>Computer Science and Engineering</span>
+                        </li>
+                        <li>
+                            <strong>Degree:</strong> 
+                            <span>BSc. in CSE</span>
+                        </li>
+                        <li>
+                            <strong>Passing Year:</strong> 
+                            <span>2026</span>
+                        </li>
+                        <!-- <li class="stat-badge">
+                            <strong>Academic Standing:</strong> 
+                            <span>CGPA: 3.60</span>
+                        </li> -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -331,51 +331,72 @@
             <h2 class="section-title reveal">Technical <span class="highlight">Arsenal</span></h2>
             <div class="skills-grid">
                 
-                <!-- Languages -->
+                <!-- Programming Languages -->
                 <div class="skill-category reveal">
-                    <h3><i class="fas fa-code"></i> Languages</h3>
+                    <h3 style="color: var(--c-blue);"><i class="fas fa-code"></i> Languages</h3>
                     <div class="skill-tags">
-                        <span class="tag"><i class="fab fa-python"></i> Python</span>
-                        <span class="tag"><i class="fab fa-java"></i> Java</span>
-                        <span class="tag"><i class="fab fa-js"></i> JavaScript</span>
-                        <span class="tag">C#</span>
-                        <span class="tag">C++</span>
-                        <span class="tag">R</span>
+                        <span class="tag tag-yellow">Python</span>
+                        <span class="tag tag-orange">Java</span>
+                        <span class="tag tag-yellow">JavaScript</span>
+                        <span class="tag tag-blue">C#</span>
+                        <span class="tag tag-blue">C++</span>
+                        <span class="tag tag-blue">R Programming</span>
+                        <span class="tag tag-green">Dart (Beginner)</span>
                     </div>
                 </div>
 
-                <!-- Frameworks & Web -->
+                <!-- Web Tech & Frameworks -->
                 <div class="skill-category reveal">
-                    <h3><i class="fas fa-layer-group"></i> Frameworks</h3>
+                    <h3 style="color: var(--c-green);"><i class="fas fa-layer-group"></i> Web Tech & Frameworks</h3>
                     <div class="skill-tags">
-                        <span class="tag"><i class="fab fa-react"></i> React</span>
-                        <span class="tag">Next.js</span>
-                        <span class="tag">Nest.js</span>
-                        <span class="tag">.NET Core</span>
-                        <span class="tag">LINQ</span>
+                        <span class="tag tag-blue">React.js</span>
+                        <span class="tag tag-red">Nest.js</span>
+                        <span class="tag tag-green">Node.js</span>
+                        <span class="tag tag-blue">Next.js</span>
+                        <span class="tag tag-maroon">.NET Core</span>
+                        <span class="tag tag-blue">Flutter (Beginner)</span>
+                        <span class="tag tag-orange">Web Tech Basics</span>
                     </div>
                 </div>
 
-                <!-- AI & Data -->
+                <!-- AI, ML & Data Science -->
                 <div class="skill-category reveal">
-                    <h3><i class="fas fa-brain"></i> AI & Data</h3>
+                    <h3 style="color: var(--c-orange);"><i class="fas fa-brain"></i> AI, ML & Data</h3>
                     <div class="skill-tags">
-                        <span class="tag">Machine Learning</span>
-                        <span class="tag">Data Science</span>
-                        <span class="tag">Basic AI Models</span>
-                        <span class="tag"><i class="fas fa-database"></i> SQL</span>
-                        <span class="tag">MLOps Research</span>
+                        <span class="tag tag-choco">Machine Learning</span>
+                        <span class="tag tag-blue">Data Science (Basic)</span>
+                        <span class="tag tag-yellow">Numpy</span>
+                        <span class="tag tag-blue">Pandas</span>
+                        <span class="tag tag-green">KNN</span>
+                        <span class="tag tag-red">Regression</span>
+                        <span class="tag tag-maroon">Research</span>
+                        <span class="tag tag-choco">AI Basic</span>
                     </div>
                 </div>
 
-                <!-- Domains & Tools -->
+                <!-- Database & API Tools -->
                 <div class="skill-category reveal">
-                    <h3><i class="fas fa-tools"></i> Domains & Tools</h3>
+                    <h3 style="color: var(--c-red);"><i class="fas fa-database"></i> Databases & Tools</h3>
                     <div class="skill-tags">
-                        <span class="tag">Computer Graphics</span>
-                        <span class="tag">Overleaf</span>
-                        <span class="tag">Software Architecture</span>
-                        <span class="tag">Cisco Networking</span>
+                        <span class="tag tag-blue">PostgreSQL</span>
+                        <span class="tag tag-red">Microsoft SQL</span>
+                        <span class="tag tag-red">Oracle</span>
+                        <span class="tag tag-orange">Postman</span>
+                        <span class="tag tag-green">Overleaf</span>
+                    </div>
+                </div>
+
+                <!-- Core CS & OS -->
+                <div class="skill-category reveal">
+                    <h3 style="color: var(--c-maroon);"><i class="fas fa-microchip"></i> Core CS & Systems</h3>
+                    <div class="skill-tags">
+                        <span class="tag tag-red">DSA (Basic)</span>
+                        <span class="tag tag-orange">Algorithms (Basic)</span>
+                        <span class="tag tag-yellow">Time Complexity</span>
+                        <span class="tag tag-green">Unix Shell Commands</span>
+                        <span class="tag tag-orange">Ubuntu Linux</span>
+                        <span class="tag tag-blue">macOS</span>
+                        <span class="tag tag-choco">Computer Graphics</span>
                     </div>
                 </div>
 
@@ -390,40 +411,29 @@
             <div class="project-grid">
                 
                 <div class="project-card reveal">
-                    <h3>QueueLess</h3>
+                    <h3>QueueLess Management</h3>
                     <p>A smart scheduling and queue management system designed to optimize wait times and streamline operations using real-time data handling.</p>
                     <div class="skill-tags" style="margin-top: auto;">
-                        <span class="tag">React</span>
-                        <span class="tag">Nest.js</span>
+                        <span class="tag tag-blue">React.js</span>
+                        <span class="tag tag-red">Nest.js</span>
                     </div>
                 </div>
 
                 <div class="project-card reveal">
-                    <h3>MLOps Literature Review</h3>
+                    <h3>MLOps & AI Literature Review</h3>
                     <p>Academic research paper exploring the integration of Machine Learning into AI-intensive software systems and modern requirement engineering.</p>
                     <div class="skill-tags" style="margin-top: auto;">
-                        <span class="tag">Research</span>
-                        <span class="tag">Overleaf</span>
-                        <span class="tag">AI/ML</span>
+                        <span class="tag tag-maroon">Research</span>
+                        <span class="tag tag-choco">Machine Learning</span>
                     </div>
                 </div>
 
                 <div class="project-card reveal">
                     <h3>University Management System</h3>
-                    <p>Comprehensive .NET Core desktop/web application handling student portals, faculty dashboards, and backend database integrations via LINQ and SQL.</p>
+                    <p>Comprehensive .NET Core desktop/web application handling student portals, faculty dashboards, and backend database integrations.</p>
                     <div class="skill-tags" style="margin-top: auto;">
-                        <span class="tag">.NET Core</span>
-                        <span class="tag">C#</span>
-                        <span class="tag">SQL</span>
-                    </div>
-                </div>
-
-                <div class="project-card reveal">
-                    <h3>Advanced Network Architecture</h3>
-                    <p>Complex Cisco network simulations featuring inter-VLAN routing, EIGRP configurations, and precision VLSM sub-netting calculations.</p>
-                    <div class="skill-tags" style="margin-top: auto;">
-                        <span class="tag">Networking</span>
-                        <span class="tag">Packet Tracer</span>
+                        <span class="tag tag-maroon">.NET Core</span>
+                        <span class="tag tag-red">Microsoft SQL</span>
                     </div>
                 </div>
 
@@ -436,50 +446,59 @@
         <div class="container">
             <div class="contact-box reveal">
                 <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Let's <span class="highlight">Connect</span></h2>
-                <p style="color: var(--text-muted); margin-bottom: 2rem;">Currently open for collaborative projects, internships, and networking opportunities in tech and AI.</p>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Currently open for collaborative projects, software engineering roles, and networking opportunities.</p>
                 
                 <div class="contact-methods">
-                    <a href="tel:+8801805999055" class="contact-item haptic-btn">
-                        <i class="fas fa-phone-alt"></i>
-                        <span>+880 180 599 9055</span>
+                    <a href="mailto:ruhananik.bd@gmail.com" class="contact-item haptic-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span>ruhananik.bd@gmail.com</span>
                     </a>
                     <div class="contact-item">
                         <i class="fas fa-map-marker-alt"></i>
-                        <span>Bashundhara R/A, Dhaka</span>
+                        <span>Dhaka, Bangladesh</span>
                     </div>
-                    <a href="mailto:your.email@example.com" class="contact-item haptic-btn">
-                        <i class="fas fa-envelope"></i>
-                        <span>Email Me</span>
-                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <footer>
-        <div class="container" style="text-align: center; padding: 2rem 0; color: var(--text-muted); border-top: 1px solid var(--glass-border);">
+        <div class="container" style="text-align: center; padding: 2.5rem 0; color: var(--text-muted); border-top: 1px solid var(--glass-border); font-size: 0.9rem;">
             <p>&copy; 2026 Anik Ruhan. Engineered with precision.</p>
         </div>
     </footer>
 
-    <!-- Scripts for Interactivity -->
+    <!-- Scripts -->
     <script>
-        // Haptic Feedback for supported devices
-        document.querySelectorAll('.haptic-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (navigator.vibrate) {
-                    navigator.vibrate(50); // Light, professional tap
-                }
+        // Pre-loader Logic
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('preloader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.visibility = 'hidden';
+                }, 600);
+            }, 500); // Artificial delay to show off the loader animation briefly
+        });
+
+        // Haptic Feedback for modern mobile devices
+        document.querySelectorAll('.haptic-btn, .tag').forEach(el => {
+            el.addEventListener('click', () => {
+                if (navigator.vibrate) navigator.vibrate(40);
+            });
+            // Add subtle haptic on hover for a premium feel (if supported by OS/Browser)
+            el.addEventListener('mouseenter', () => {
+                if (navigator.vibrate) navigator.vibrate(10); 
             });
         });
 
-        // Scroll Reveal Animation
+        // Scroll Reveal Animation Engine
         function reveal() {
             var reveals = document.querySelectorAll(".reveal");
             for (var i = 0; i < reveals.length; i++) {
                 var windowHeight = window.innerHeight;
                 var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 100;
+                var elementVisible = 120;
                 
                 if (elementTop < windowHeight - elementVisible) {
                     reveals[i].classList.add("active");
@@ -487,7 +506,7 @@
             }
         }
         window.addEventListener("scroll", reveal);
-        reveal(); // Trigger on load
+        reveal(); // Trigger initial load
     </script>
 </body>
 </html>
